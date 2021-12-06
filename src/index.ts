@@ -1,3 +1,7 @@
-import { } from 'console'
+import { MikroORM } from '@mikro-orm/core';
+import options from './mikro-orm.config';
 
-console.log('hello world there hello')
+async () => {
+  const orm = await MikroORM.init(options);
+  console.log(orm.em);
+};
