@@ -13,7 +13,7 @@ export class Post extends BaseEntity {
   @Property()
   likes = 0;
 
-  @OneToMany(() => User, (user) => user.username)
+  @OneToMany(() => User, (user) => user)
   likedUsers = new Collection<User>(this);
 
   constructor(title: string, content: string) {
