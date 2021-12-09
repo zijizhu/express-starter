@@ -1,20 +1,15 @@
-import { Entity, Property } from '@mikro-orm/core';
-import { BaseEntity } from './BaseEntity';
+import { model, Schema, Model, Document } from 'mongoose';
 
-@Entity()
-export class User extends BaseEntity {
-  @Property()
+interface UserDocument extends Document {
   username: string;
-
-  @Property({ nullable: true })
-  dob?: Date;
-
-  @Property()
   email: string;
-
-  constructor(username: string, email: string) {
-    super();
-    this.username = username;
-    this.email = email;
-  }
+  password: string;
 }
+
+const userSchema: Schema = new Schema({
+  username: { type: String, required: true },
+  email: { type: String, required: true },
+  password: { type: String, required: true }
+});
+
+export const UserModel: Model<UserDocument> = model('User', userSchema);

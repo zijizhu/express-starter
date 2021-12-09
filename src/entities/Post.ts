@@ -1,24 +1,17 @@
-import { Entity, Property, OneToMany, Collection } from '@mikro-orm/core';
-import { BaseEntity } from './BaseEntity';
-import { User } from './User';
+import { model, Schema, Model, Document, ObjectId } from 'mongoose';
 
-@Entity()
-export class Post extends BaseEntity {
-  @Property()
+interface PostDocument extends Document {
   title: string;
-
-  @Property()
   content: string;
-
-  @Property()
-  likes = 0;
-
-  @OneToMany(() => User, (user) => user)
-  likedUsers = new Collection<User>(this);
-
-  constructor(title: string, content: string) {
-    super();
-    this.title = title;
-    this.content = content;
-  }
+  likes: number;
+  likedUsers: ObjectId[];
 }
+
+const postSchema: Schema = new Schema({
+  title: { type: String, required: true },
+  content: { type: String, required: true },
+  likes: { type: Number, required: true },
+  likedUsers: { type: [Schema.Types.ObjectId], required: true }
+});
+
+export const PostModel: Model<PostDocument> = model('Post', postSchema);
