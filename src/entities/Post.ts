@@ -1,6 +1,6 @@
 import { model, Schema, Model, Document, ObjectId } from 'mongoose';
 
-interface PostDocument extends Document {
+interface IPost extends Document {
   title: string;
   content: string;
   likes: number;
@@ -14,4 +14,4 @@ const postSchema: Schema = new Schema({
   likedUsers: { type: [Schema.Types.ObjectId], required: true }
 });
 
-export const PostModel: Model<PostDocument> = model('Post', postSchema);
+export const PostModel: Model<IPost> = model('Post', postSchema);
