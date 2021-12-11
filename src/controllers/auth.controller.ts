@@ -1,8 +1,8 @@
+import type { Request } from 'express';
 import PromiseRouter from 'express-promise-router';
 
 import { AuthService } from '../services/auth.service';
-import type { LoginReqBody, RegisterReqBody } from 'src/types';
-import type { Request } from 'express';
+import type { LoginReqBody, RegisterReqBody } from '../types';
 
 const router = PromiseRouter();
 
@@ -11,7 +11,7 @@ router.post('/login', async (req: Request<{}, {}, LoginReqBody>, res) => {
   if (!email || !password) {
     return res
       .status(400)
-      .json({ message: 'one of email or passoword is missing' });
+      .json({ message: 'One of email or passoword is missing!' });
   }
   try {
     const userInfo = await AuthService.findUser(email, password);
@@ -32,7 +32,6 @@ router.post('/register', async (req: Request<{}, {}, RegisterReqBody>, res) => {
     await AuthService.createUser(username, email, password, dob, gender);
     return res.status(200).json({ message: 'success!' });
   } catch (error) {
-    console.log(error.code);
     return res.status(400).json({ message: error.message });
   }
 });
