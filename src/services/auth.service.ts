@@ -2,17 +2,17 @@ import { hash, verify } from 'argon2';
 import { emailRegex } from '../constants';
 import { UserModel } from '../entities';
 
-async function findUser(email: string, password: string) {
+async function findUser(email: string) {
   const user = await UserModel.findOne({ email });
   if (user) {
-    if (!(await verify(user.password, password))) {
-      throw new Error('Password is incorrect!');
-    }
-    const { username, email, dob, gender } = user;
-    return { username, email, dob: dob && dob.toString(), gender };
-  } else {
-    throw new Error('Email not found!');
+    const { username, email, dob, gender, password } = user;
+    return { username, email, dob: dob && dob.toString(), gender, password };
   }
+  return undefined;
+}
+
+function verifyPassword(hashedValue: string, stringValue: string) {
+  return verify(hashedValue, stringValue);
 }
 
 async function createUser(
@@ -55,4 +55,4 @@ async function createUser(
   });
 }
 
-export const AuthService = { findUser, createUser };
+export const AuthService = { findUser, createUser, verifyPassword };
