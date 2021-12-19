@@ -1,58 +1,92 @@
+import { Types } from 'mongoose';
 import { hash, verify } from 'argon2';
-import { emailRegex } from '../constants';
+
 import { UserModel } from '../entities';
+import { emailRegex } from '../constants';
+import type { UserSession } from '../types';
 
-async function findUser(email: string) {
-  const user = await UserModel.findOne({ email });
-  if (user) {
-    const { username, email, dob, gender, password } = user;
-    return { username, email, dob: dob && dob.toString(), gender, password };
+/**
+ *
+ * @param emailInput User's email
+ * @param passwordInput User's password
+ * @returns A promise of user's session data and a message
+ */
+async function verifyUser(
+  emailInput: string,
+  passwordInput: string
+): Promise<{
+  user: UserSession | null;
+  message: string;
+}> {
+  const user = await UserModel.findOne({ email: emailInput });
+  if (!user) {
+    return { user: null, message: 'Email not found!' };
   }
-  return undefined;
+  const { id, password } = user;
+  if (await verify(password, passwordInput)) {
+    return { user: { id }, message: 'Success!' };
+  }
+  return { user: null, message: 'Password is incorrect!' };
 }
 
-function verifyPassword(hashedValue: string, stringValue: string) {
-  return verify(hashedValue, stringValue);
-}
-
+/**
+ *
+ * @param username User's username
+ * @param email User's email
+ * @param password User's password
+ * @param dob User's Date of Birth
+ * @param gender User's gender
+ * @returns A promise of user's session data and a message
+ */
 async function createUser(
   username: string,
   email: string,
   password: string,
   dob: number | undefined,
   gender: string | undefined
-) {
+): Promise<{
+  user: UserSession | null;
+  message: string;
+}> {
   // Check if data is valid
   if (!emailRegex.test(email)) {
-    throw new Error('Please enter a valid email!');
+    return { user: null, message: 'Please enter a valid email!' };
   }
   if (password.length < 6) {
-    throw new Error('Password must contain 6 or more letters!');
+    return {
+      user: null,
+      message: 'Password must contain 6 or more letters!'
+    };
   }
   if (gender && gender !== 'male' && gender !== 'female') {
-    throw new Error('Please enter a valid gender!');
+    return { user: null, message: 'Please enter a valid gender!' };
   }
   if (dob && typeof dob !== 'number') {
-    throw new Error('Please enter a valid date of birth!');
+    return { user: null, message: 'Please enter a valid date of birth!' };
   }
   const emailExists = await UserModel.exists({ email });
   if (emailExists) {
-    throw new Error('This email already exists!');
+    return { user: null, message: 'This email already exists!' };
   }
   const usernameExists = await UserModel.exists({ username });
   if (usernameExists) {
-    throw new Error('This username already exists!');
+    return { user: null, message: 'This username already exists!' };
   }
 
   // Insert a user document into the database
   const hashedPwd = await hash(password);
-  await UserModel.create({
+  const res = await UserModel.create({
+    _id: new Types.ObjectId(),
     username,
     email,
     password: hashedPwd,
     dob: dob && new Date(dob * 1000),
     gender
   });
+  return {
+    user: { id: res.id },
+    message: ''
+  };
 }
 
-export const AuthService = { findUser, createUser, verifyPassword };
+export const AuthService = { verifyUser, createUser };

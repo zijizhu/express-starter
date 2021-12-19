@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import passport from 'passport';
 import session from 'express-session';
+import cookieParser from 'cookie-parser';
 import { connect, connection } from 'mongoose';
 
 import './config/passport';
@@ -17,8 +18,9 @@ const main = async () => {
     user: DB_USER,
     pass: DB_PASS
   });
-  await connection.db.dropDatabase();
+  // await connection.db.dropDatabase();
   app.use(express.json());
+  app.use(cookieParser());
   app.use(
     session({
       secret: 'yes',

@@ -1,5 +1,5 @@
-import * as passportLocal from 'passport-local';
 import passport from 'passport';
+import * as passportLocal from 'passport-local';
 
 import { AuthService } from '../services/auth.service';
 
@@ -8,18 +8,17 @@ const LocalStrategy = passportLocal.Strategy;
 passport.use(
   'local',
   new LocalStrategy(
-    { usernameField: 'email' },
+    { usernameField: 'email', session: false },
     async (emailInput, passwordInput, done) => {
       try {
-        const user = await AuthService.findUser(emailInput);
+        const { user, message } = await AuthService.verifyUser(
+          emailInput,
+          passwordInput
+        );
         if (user) {
-          const { password, ...userInfo } = user;
-          if (await AuthService.verifyPassword(password, passwordInput)) {
-            return done(null, userInfo);
-          }
-          return done(null, false, { message: 'Password is incorrect!' });
+          return done(null, user, { message });
         } else {
-          return done(null, false, { message: 'Email not found!' });
+          return done(null, false, { message });
         }
       } catch (error) {
         return done(error);
@@ -27,3 +26,13 @@ passport.use(
     }
   )
 );
+
+passport.serializeUser((user, done) => {
+  console.log('serialize called');
+  done(null, user);
+});
+
+passport.deserializeUser((_, done) => {
+  console.log('deserialize called');
+  done(null, { id: '' });
+});

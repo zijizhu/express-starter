@@ -1,3 +1,11 @@
+declare global {
+  namespace Express {
+    interface User {
+      id: string;
+    }
+  }
+}
+
 export interface LoginReqBody {
   email?: string;
   password?: string;
@@ -9,4 +17,8 @@ export interface RegisterReqBody {
   password?: string;
   dob?: number;
   gender: string;
+}
+
+export interface UserSession {
+  id: string;
 }
