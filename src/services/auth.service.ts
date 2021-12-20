@@ -2,7 +2,6 @@ import { Types } from 'mongoose';
 import { hash, verify } from 'argon2';
 
 import { UserModel } from '../entities';
-import { emailRegex } from '../constants';
 import type { UserSession } from '../types';
 
 /**
@@ -11,7 +10,7 @@ import type { UserSession } from '../types';
  * @param passwordInput User's password
  * @returns A promise of user's session data and a message
  */
-async function verifyUser(
+async function verifyCredential(
   emailInput: string,
   passwordInput: string
 ): Promise<{
@@ -42,34 +41,16 @@ async function createUser(
   username: string,
   email: string,
   password: string,
-  dob: number | undefined,
-  gender: string | undefined
+  dob: number | undefined
 ): Promise<{
   user: UserSession | null;
   message: string;
 }> {
   // Check if data is valid
-  if (!emailRegex.test(email)) {
-    return { user: null, message: 'Please enter a valid email!' };
-  }
-  if (password.length < 6) {
-    return {
-      user: null,
-      message: 'Password must contain 6 or more letters!'
-    };
-  }
-  if (gender && gender !== 'male' && gender !== 'female') {
-    return { user: null, message: 'Please enter a valid gender!' };
-  }
-  if (dob && typeof dob !== 'number') {
-    return { user: null, message: 'Please enter a valid date of birth!' };
-  }
-  const emailExists = await UserModel.exists({ email });
-  if (emailExists) {
+  if (await UserModel.exists({ email })) {
     return { user: null, message: 'This email already exists!' };
   }
-  const usernameExists = await UserModel.exists({ username });
-  if (usernameExists) {
+  if (await UserModel.exists({ username })) {
     return { user: null, message: 'This username already exists!' };
   }
 
@@ -80,8 +61,7 @@ async function createUser(
     username,
     email,
     password: hashedPwd,
-    dob: dob && new Date(dob * 1000),
-    gender
+    dob: dob && new Date(Number(dob) * 1000)
   });
   return {
     user: { id: res.id },
@@ -89,4 +69,4 @@ async function createUser(
   };
 }
 
-export const AuthService = { verifyUser, createUser };
+export const AuthService = { verifyCredential, createUser };

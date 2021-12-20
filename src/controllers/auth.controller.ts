@@ -1,5 +1,6 @@
 import passport from 'passport';
 import PromiseRouter from 'express-promise-router';
+import { body, validationResult } from 'express-validator';
 import type { Request, Response, NextFunction } from 'express';
 
 import { AuthService } from '../services/auth.service';
@@ -10,32 +11,34 @@ const router = PromiseRouter();
 function logDetails(req: Request) {
   console.log('---------------------');
   console.log('user: ', req.user);
+  console.log('isAuthenticated: ', req.isAuthenticated());
   console.log('cookies: ', req.cookies);
   console.log('session id: ', req.session.id);
   console.log('session: ', req.session);
 }
-
-router.get('/', (req, res: Response) => {
-  logDetails(req);
-  return res.status(200).json({ message: 'hi' });
-});
 
 /**
  * Log the user in with the credentials
  */
 router.post(
   '/login',
+  body('email', 'Please enter a valid email!').isEmail(),
+  body('password', 'Please enter the password!').notEmpty(),
   function (
     req: Request<{}, {}, LoginReqBody>,
     res: Response,
     next: NextFunction
   ) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     passport.authenticate('local', (error, user, info) => {
       if (error) {
         return res.status(400).json(info);
       }
       if (user) {
-        req.logIn({ id: '1' }, (err) => {
+        req.logIn(user, (err) => {
           if (err) {
             next(err);
           }
@@ -45,6 +48,7 @@ router.post(
       logDetails(req);
       return res.status(400).json(info);
     })(req, res, next);
+    return;
   }
 );
 
@@ -53,32 +57,33 @@ router.post(
  */
 router.post(
   '/register',
+  body('email', 'Please enter a valid email!').isEmail(),
+  body('username', 'Please enter a valid username!').isString(),
+  body('password', 'Please enter a stronger password!').isLength({ min: 6 }),
+  body('dob', 'Please enter a valid date of birth!').optional().isNumeric(),
   async function (
     req: Request<{}, {}, RegisterReqBody>,
     res: Response,
     next: NextFunction
   ) {
-    const { username, email, password, dob, gender } = req.body;
-    if (!username || !email || !password) {
-      return res
-        .status(400)
-        .json({ message: 'Please provide all required fields!' });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
+    const { username, email, password, dob } = req.body;
     try {
       const { user, message } = await AuthService.createUser(
         username,
         email,
         password,
-        dob,
-        gender
+        dob
       );
-      console.log('sessionID before register: ', req.sessionID);
       if (user) {
-        req.logIn({ id: '1' }, (err) => {
+        req.logIn(user, (err) => {
           if (err) {
             next(err);
           }
-          return res.status(200).json({ message: 'success' });
+          return res.status(200).json({ message: 'Success!' });
         });
       }
       logDetails(req);
@@ -88,5 +93,13 @@ router.post(
     }
   }
 );
+
+/**
+ * Logs the user out
+ */
+router.get('/logout', function (req, res) {
+  req.logout();
+  res.status(200).json({ message: 'Success!' });
+});
 
 export const AuthController = router;

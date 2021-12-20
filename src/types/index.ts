@@ -12,11 +12,10 @@ export interface LoginReqBody {
 }
 
 export interface RegisterReqBody {
-  username?: string;
-  email?: string;
-  password?: string;
+  username: string;
+  email: string;
+  password: string;
   dob?: number;
-  gender: string;
 }
 
 export interface UserSession {

@@ -1,4 +1,5 @@
 import passport from 'passport';
+import type { Request, Response, NextFunction } from 'express';
 import * as passportLocal from 'passport-local';
 
 import { AuthService } from '../services/auth.service';
@@ -11,7 +12,7 @@ passport.use(
     { usernameField: 'email', session: false },
     async (emailInput, passwordInput, done) => {
       try {
-        const { user, message } = await AuthService.verifyUser(
+        const { user, message } = await AuthService.verifyCredential(
           emailInput,
           passwordInput
         );
@@ -29,10 +30,21 @@ passport.use(
 
 passport.serializeUser((user, done) => {
   console.log('serialize called');
-  done(null, user);
+  done(null, user.id);
 });
 
-passport.deserializeUser((_, done) => {
+passport.deserializeUser(async (id, done) => {
   console.log('deserialize called');
-  done(null, { id: '' });
+  done(null, { id: id as string });
 });
+
+export function isAuthenticated(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  return res.status(401).json({ message: 'Unauthorized!' });
+}
