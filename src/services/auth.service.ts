@@ -6,8 +6,8 @@ import type { UserSession } from '../types';
 
 /**
  *
- * @param emailInput User's email
- * @param passwordInput User's password
+ * @param emailInput User's email input
+ * @param passwordInput User's password input
  * @returns A promise of user's session data and a message
  */
 async function verifyCredential(
@@ -30,11 +30,10 @@ async function verifyCredential(
 
 /**
  *
- * @param username User's username
- * @param email User's email
- * @param password User's password
- * @param dob User's Date of Birth
- * @param gender User's gender
+ * @param username User's username input
+ * @param email User's email input
+ * @param password User's password input
+ * @param dob User's Date of Birth input
  * @returns A promise of user's session data and a message
  */
 async function createUser(

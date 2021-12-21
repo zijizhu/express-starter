@@ -5,7 +5,6 @@ export interface IUser extends Document {
   email: string;
   password: string;
   dob: Date;
-  gender: 'male' | 'female' | 'other';
 }
 
 const userSchema: Schema = new Schema({

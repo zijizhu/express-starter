@@ -3,7 +3,7 @@ import PromiseRouter from 'express-promise-router';
 import { body, validationResult } from 'express-validator';
 import type { Request, Response, NextFunction } from 'express';
 
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services';
 import type { LoginReqBody, RegisterReqBody } from '../types';
 
 const router = PromiseRouter();

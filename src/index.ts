@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import IORedis from 'ioredis';
 import passport from 'passport';
-import { connect, connection } from 'mongoose';
+import { connect } from 'mongoose';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import connectRedis from 'connect-redis';
@@ -23,7 +23,6 @@ const main = async () => {
     user: DB_USER,
     pass: DB_PASS
   });
-  // await connection.db.dropDatabase();
 
   // Express middleware setup
   app.use(express.json());
