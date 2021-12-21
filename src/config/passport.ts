@@ -29,12 +29,10 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log('serialize called');
   done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
-  console.log('deserialize called');
   done(null, { id: id as string });
 });
 

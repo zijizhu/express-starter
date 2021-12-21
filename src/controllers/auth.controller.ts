@@ -8,14 +8,7 @@ import type { LoginReqBody, RegisterReqBody } from '../types';
 
 const router = PromiseRouter();
 
-function logDetails(req: Request) {
-  console.log('---------------------');
-  console.log('user: ', req.user);
-  console.log('isAuthenticated: ', req.isAuthenticated());
-  console.log('cookies: ', req.cookies);
-  console.log('session id: ', req.session.id);
-  console.log('session: ', req.session);
-}
+router.get('/', (_, res) => res.status(200).json({ message: 'success' }));
 
 /**
  * Log the user in with the credentials
@@ -45,7 +38,6 @@ router.post(
           return res.status(200).json({ message: 'Success!' });
         });
       }
-      logDetails(req);
       return res.status(400).json(info);
     })(req, res, next);
     return;
@@ -86,7 +78,6 @@ router.post(
           return res.status(200).json({ message: 'Success!' });
         });
       }
-      logDetails(req);
       return res.status(400).json({ message });
     } catch (error) {
       return res.status(500);
