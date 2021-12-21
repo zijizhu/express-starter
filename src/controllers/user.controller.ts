@@ -4,6 +4,9 @@ import { UserService } from '../services';
 
 const router = PromiseRouter();
 
+/**
+ * Get user info of current user
+ */
 router.get('/', async (req, res) => {
   if (req.user) {
     const userInfo = await UserService.getUserInfo(req.user.id);
