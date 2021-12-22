@@ -1,7 +1,7 @@
 {
-  "name": "learn-express",
+  "name": "express-starter",
   "version": "1.0.0",
-  "description": "",
+  "description": "a working express.js server",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
@@ -10,11 +10,12 @@
     "start": "node dist/index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "zijizhu",
   "license": "ISC",
   "devDependencies": {
     "@types/connect-redis": "^0.0.18",
     "@types/cookie-parser": "^1.4.2",
+    "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/express-session": "^1.17.4",
     "@types/mongoose": "^5.11.97",
@@ -28,6 +29,7 @@
     "argon2": "^0.28.3",
     "connect-redis": "^6.0.0",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-promise-router": "^4.1.1",

@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import cors from 'cors';
 import express from 'express';
 import IORedis from 'ioredis';
 import passport from 'passport';
@@ -7,10 +8,10 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import connectRedis from 'connect-redis';
 
-import { isAuthenticated } from './config/passport';
+import { isAuthenticated, cookieConfig } from './config';
 import { AuthController, UserController } from './controllers';
 
-const { PORT, DB_AUTH_SRC, DB_URL, DB_USER, DB_PASS } = process.env;
+const { PORT, DB_URL, SESSION_SECRET } = process.env;
 
 const app = express();
 const redis = new IORedis();
@@ -18,13 +19,10 @@ const redisStore = connectRedis(session);
 
 const main = async () => {
   // Database setup
-  await connect(DB_URL, {
-    authSource: DB_AUTH_SRC,
-    user: DB_USER,
-    pass: DB_PASS
-  });
+  await connect(DB_URL);
 
   // Express middleware setup
+  app.use(cors());
   app.use(express.json());
   app.use(cookieParser());
   app.use(
@@ -33,9 +31,10 @@ const main = async () => {
         client: redis,
         disableTouch: true
       }),
-      secret: 'yes',
-      saveUninitialized: false,
-      resave: false
+      resave: false,
+      cookie: cookieConfig,
+      secret: SESSION_SECRET,
+      saveUninitialized: false
     })
   );
   app.use(passport.initialize());
