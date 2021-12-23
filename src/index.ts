@@ -3,7 +3,6 @@ import cors from 'cors';
 import express from 'express';
 import IORedis from 'ioredis';
 import passport from 'passport';
-import { connect } from 'mongoose';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import connectRedis from 'connect-redis';
@@ -11,16 +10,13 @@ import connectRedis from 'connect-redis';
 import { isAuthenticated, cookieConfig } from './config';
 import { AuthController, UserController } from './controllers';
 
-const { PORT, DB_URL, SESSION_SECRET } = process.env;
+const { PORT, SESSION_SECRET } = process.env;
 
 const app = express();
 const redis = new IORedis();
 const redisStore = connectRedis(session);
 
 const main = async () => {
-  // Database setup
-  await connect(DB_URL);
-
   // Express middleware setup
   app.use(cors());
   app.use(express.json());

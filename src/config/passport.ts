@@ -1,6 +1,6 @@
 import passport from 'passport';
-import type { Request, Response, NextFunction } from 'express';
 import * as passportLocal from 'passport-local';
+import type { Request, Response, NextFunction } from 'express';
 
 import { AuthService } from '../services/auth.service';
 
@@ -33,7 +33,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (id, done) => {
-  done(null, { id: id as string });
+  done(null, { id: id as number });
 });
 
 export function isAuthenticated(

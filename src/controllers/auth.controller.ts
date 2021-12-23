@@ -68,7 +68,7 @@ router.post(
         username,
         email,
         password,
-        dob
+        `${dob}`
       );
       if (user) {
         req.logIn(user, (err) => {

@@ -1,7 +1,6 @@
-import { Types } from 'mongoose';
 import { hash, verify } from 'argon2';
 
-import { UserModel } from '../entities';
+import prisma from '../client';
 import type { UserSession } from '../types';
 
 /**
@@ -17,7 +16,7 @@ async function verifyCredential(
   user: UserSession | null;
   message: string;
 }> {
-  const user = await UserModel.findOne({ email: emailInput });
+  const user = await prisma.user.findFirst({ where: { email: emailInput } });
   if (!user) {
     return { user: null, message: 'Email not found!' };
   }
@@ -40,30 +39,37 @@ async function createUser(
   username: string,
   email: string,
   password: string,
-  dob: number | undefined
+  dob: string | undefined
 ): Promise<{
   user: UserSession | null;
   message: string;
 }> {
   // Check if data is valid
-  if (await UserModel.exists({ email })) {
+  const emailCount = await prisma.user.count({
+    where: { email }
+  });
+  if (emailCount > 0) {
     return { user: null, message: 'This email already exists!' };
   }
-  if (await UserModel.exists({ username })) {
+  const usernameCount = await prisma.user.count({
+    where: { username }
+  });
+  if (usernameCount > 0) {
     return { user: null, message: 'This username already exists!' };
   }
 
   // Insert a user document into the database
   const hashedPwd = await hash(password);
-  const res = await UserModel.create({
-    _id: new Types.ObjectId(),
-    username,
-    email,
-    password: hashedPwd,
-    dob: dob && new Date(Number(dob) * 1000)
+  const { id } = await prisma.user.create({
+    data: {
+      email,
+      username,
+      password: hashedPwd,
+      dob: dob && new Date(Number(dob) * 1000)
+    }
   });
   return {
-    user: { id: res.id },
+    user: { id },
     message: ''
   };
 }

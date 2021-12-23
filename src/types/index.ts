@@ -1,7 +1,7 @@
 declare global {
   namespace Express {
     interface User {
-      id: string;
+      id: number;
     }
   }
 }
@@ -19,5 +19,5 @@ export interface RegisterReqBody {
 }
 
 export interface UserSession {
-  id: string;
+  id: number;
 }
