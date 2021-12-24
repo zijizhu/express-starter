@@ -10,10 +10,10 @@ import connectRedis from 'connect-redis';
 import { isAuthenticated, cookieConfig } from './config';
 import { AuthController, UserController } from './controllers';
 
-const { PORT, SESSION_SECRET } = process.env;
+const { PORT, SESSION_SECRET, REDIS_URL } = process.env;
 
 const app = express();
-const redis = new IORedis();
+const redis = new IORedis(REDIS_URL);
 const redisStore = connectRedis(session);
 
 const main = async () => {
@@ -27,6 +27,7 @@ const main = async () => {
         client: redis,
         disableTouch: true
       }),
+      proxy: true,
       resave: false,
       cookie: cookieConfig,
       secret: SESSION_SECRET,
