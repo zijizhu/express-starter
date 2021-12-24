@@ -27,7 +27,8 @@ First, create a .env file to let node access environment variables
 touch .env
 ```
 
-Adding environment variables to .env
+Then, add environment variables to .env
+For `DATABASE_URL`, see [this Prisma guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases/connect-your-database-typescript-postgres)
 
 ```
 PORT=<port-number>
@@ -37,10 +38,10 @@ DATABASE_URL=<postgresql-server-url>
 ```
 
 Make sure both PostgreSQL and Redis are running.
-Then, install the project and start the server
+Finally, install dependencies and start the server
 
 ```shell
-# Install the project
+# Install dependencies
 yarn install
 
 # Compile TypeScript source code into JavsScript and watch for changes
@@ -52,7 +53,7 @@ yarn dev
 
 ### Deployment
 
-This project has been tested on Heroku (free tier)
+This server is able to run on Heroku (free tier) via docker
 To deploy on Heroku, please make sure:
 
 1. You have [Docker](https://docs.docker.com/get-docker/) installed.
@@ -63,6 +64,6 @@ Then please follow [this Heroku Guide](https://devcenter.heroku.com/articles/con
 - [Heroku Postgres](https://devcenter.heroku.com/articles/heroku-postgresql)
 - [Heroku Redis](https://devcenter.heroku.com/articles/heroku-redis)
 
-## Issues and Improvements
-
 ### Testing
+
+There aren't any tests yet. However, [Jest](https://jestjs.io/docs/getting-started) should work great with this project.
