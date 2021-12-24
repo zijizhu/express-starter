@@ -5,7 +5,7 @@ This repository is a working express.js server for quickly scaffolding the backe
 ## Features
 
 - TypeScript
-- Mongodb with Mongoose
+- PostgreSQL with Prisma ORM
 - Session authentication with express-sesssion and passport.js
 - Redis store for persisting session data
 
@@ -15,7 +15,7 @@ This repository is a working express.js server for quickly scaffolding the backe
 
 1. [Node.js](https://nodejs.org/en/)
 2. [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable)
-3. [Mongodb](https://docs.mongodb.com/manual/installation/)
+3. [PostgreSQL](https://www.postgresql.org/download/)
 4. [Redis](https://redis.io/topics/quickstart)
 
 ### Development
@@ -23,16 +23,20 @@ This repository is a working express.js server for quickly scaffolding the backe
 First, create a .env file to let node access environment variables
 
 ```shell
+# Only needed for development
 touch .env
 ```
 
 Adding environment variables to .env
 
 ```
-PORT=4000
+PORT=<port-number>
+SESSION_SECRET=<your-session-secret>
+REDIS_URL=<redis-server-url>
+DATABASE_URL=<postgresql-server-url>
 ```
 
-Make sure both Mongodb and Redis are running.
+Make sure both PostgreSQL and Redis are running.
 Then, install the project and start the server
 
 ```shell
@@ -48,6 +52,17 @@ yarn dev
 
 ### Deployment
 
-## Improvements
+This project has been tested on Heroku (free tier)
+To deploy on Heroku, please make sure:
+
+1. You have [Docker](https://docs.docker.com/get-docker/) installed.
+2. You have a Heroku account and have [Heroku Cli](https://devcenter.heroku.com/articles/heroku-cli) installed.
+
+Then please follow [this Heroku Guide](https://devcenter.heroku.com/articles/container-registry-and-runtime). After creating the app by `heroku create`, you need to install Heroku PostgreSQL and Redis addons for the app to work properly:
+
+- [Heroku Postgres](https://devcenter.heroku.com/articles/heroku-postgresql)
+- [Heroku Redis](https://devcenter.heroku.com/articles/heroku-redis)
+
+## Issues and Improvements
 
 ### Testing
